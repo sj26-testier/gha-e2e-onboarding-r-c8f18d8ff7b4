@@ -1,0 +1,43 @@
+{
+  "name": "Shadow old-only",
+  "on": {
+    "push": {
+      "branches": [
+        "shape-*"
+      ],
+      "paths": [
+        "old/**"
+      ]
+    },
+    "pull_request": {
+      "branches": [
+        "rename-base"
+      ],
+      "paths": [
+        "old/**"
+      ]
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "jobs": {
+    "probe": {
+      "name": "old-only",
+      "runs-on": "ubuntu-latest",
+      "timeout-minutes": 2,
+      "steps": [
+        {
+          "name": "Immutable execution marker",
+          "env": {
+            "EVENT": "${{ github.event_name }}",
+            "SHA": "${{ github.sha }}",
+            "WORKFLOW_SHA": "${{ github.workflow_sha }}",
+            "REF": "${{ github.ref }}"
+          },
+          "run": "printf 'SHADOW_PROBE|old-only|%s|%s|%s|%s\\n' \"$EVENT\" \"$SHA\" \"$WORKFLOW_SHA\" \"$REF\""
+        }
+      ]
+    }
+  }
+}
