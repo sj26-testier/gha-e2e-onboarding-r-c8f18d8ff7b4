@@ -1,0 +1,46 @@
+{
+  "name": "Shadow paths",
+  "on": {
+    "push": {
+      "branches": [
+        "probe-*"
+      ],
+      "tags": [
+        "shadow-*"
+      ],
+      "paths": [
+        "src/**"
+      ]
+    },
+    "pull_request": {
+      "branches": [
+        "main"
+      ],
+      "paths": [
+        "src/**"
+      ]
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "jobs": {
+    "probe": {
+      "name": "paths",
+      "runs-on": "ubuntu-latest",
+      "timeout-minutes": 2,
+      "steps": [
+        {
+          "name": "Immutable execution marker",
+          "env": {
+            "EVENT": "${{ github.event_name }}",
+            "SHA": "${{ github.sha }}",
+            "WORKFLOW_SHA": "${{ github.workflow_sha }}",
+            "REF": "${{ github.ref }}"
+          },
+          "run": "printf 'SHADOW_PROBE|paths|%s|%s|%s|%s\\n' \"$EVENT\" \"$SHA\" \"$WORKFLOW_SHA\" \"$REF\""
+        }
+      ]
+    }
+  }
+}

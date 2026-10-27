@@ -1,0 +1,50 @@
+{
+  "name": "Shadow ordered",
+  "on": {
+    "push": {
+      "branches": [
+        "probe-*"
+      ],
+      "tags": [
+        "shadow-*"
+      ],
+      "paths": [
+        "src/**",
+        "!src/private/**",
+        "src/private/allow.txt"
+      ]
+    },
+    "pull_request": {
+      "branches": [
+        "main"
+      ],
+      "paths": [
+        "src/**",
+        "!src/private/**",
+        "src/private/allow.txt"
+      ]
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "jobs": {
+    "probe": {
+      "name": "ordered",
+      "runs-on": "ubuntu-latest",
+      "timeout-minutes": 2,
+      "steps": [
+        {
+          "name": "Immutable execution marker",
+          "env": {
+            "EVENT": "${{ github.event_name }}",
+            "SHA": "${{ github.sha }}",
+            "WORKFLOW_SHA": "${{ github.workflow_sha }}",
+            "REF": "${{ github.ref }}"
+          },
+          "run": "printf 'SHADOW_PROBE|ordered|%s|%s|%s|%s\\n' \"$EVENT\" \"$SHA\" \"$WORKFLOW_SHA\" \"$REF\""
+        }
+      ]
+    }
+  }
+}
